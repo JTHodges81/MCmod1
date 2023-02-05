@@ -32,6 +32,7 @@ public class MyMod
     // Creates a new BlockItem with the id "examplemod:example_block", combining the namespace and path
     public static final RegistryObject<Item> EXAMPLE_BLOCK_ITEM = ITEMS.register("example_block", () -> new BlockItem(EXAMPLE_BLOCK.get(), new Item.Properties()));
 */
+    //test update
     public MyMod()
     {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
