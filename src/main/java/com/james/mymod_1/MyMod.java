@@ -1,7 +1,14 @@
 package com.james.mymod_1;
 
+import com.james.mymod_1.Items.First_Item;
+import com.james.mymod_1.init.ItemInit;
 import com.mojang.logging.LogUtils;
+import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.CreativeModeTabs;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.CreativeModeTabEvent;
@@ -11,7 +18,10 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import net.minecraftforge.registries.RegistryObject;
 import org.slf4j.Logger;
+
+import java.awt.*;
 
 // The value here should match an entry in the META-INF/mods.toml file
 @Mod(MyMod.MOD_ID)
@@ -35,9 +45,9 @@ public class MyMod
     //test update
     public MyMod()
     {
-        IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+        final IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
 
-        ModItems.register(modEventBus);
+        ItemInit.register(modEventBus);
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
     /*
@@ -51,6 +61,8 @@ public class MyMod
 
         // Register the item to a creative tab
         modEventBus.addListener(this::addCreative);
+        modEventBus.addListener(this::buildContents);
+
     }
 
     private void commonSetup(final FMLCommonSetupEvent event)
@@ -58,11 +70,33 @@ public class MyMod
 
     }
 
-    private void addCreative(CreativeModeTabEvent.BuildContents event)
+    @SubscribeEvent
+    public void buildContents(CreativeModeTabEvent.Register event)
     {
+        event.registerCreativeModeTab(new ResourceLocation(MOD_ID, "MY MOD TAB"), builder ->
+                builder.title(Component.translatable("MY ITEMS"))
+                        .icon(()->new ItemStack(First_Item.get()))
+                        .displayItems((enabledFlags, populator, hasPermissions)->
+                        {
+                            populator.accept();
+                        })
+        );
+    }
+
+
+    private void addCreative(CreativeModeTabEvent.Register event)
+    {
+        event.registerCreativeModeTab(new ResourceLocation(MOD_ID, "mymod_1"), builder -> builder.title(Component.translatable("MY ITEMS"))
+                        .icon(()->new ItemStack(First_Item.get()))
+                        .displayItems((enabledFlags, populator, hasPermissions)->{
+                            populator.accept(First_Item.get());
+                        })
+        );
+
      /*   if (event.getTab() == CreativeModeTabs.BUILDING_BLOCKS)
             event.accept(EXAMPLE_BLOCK_ITEM);
             */
+
     }
     /*
     // You can use SubscribeEvent and let the Event Bus discover methods to call
